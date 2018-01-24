@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="category-grid">
+  <div class="category-grid__category">
+    <span class="subtext">Creator Name</span>
+    <h3>This is a category</h3>
+    <p class="description">This is category text.</p>
+    {% block edit_buttons %}{% endblock %}
+  </div>
+<div class="carousel">
+  <h1>Recent Items</h1>
+  <button class="carousel__btn--left">left</button>
+  <div class="carousel__items">
+    <div_class="carousel__item">
+      <span class="subtext">Item</span>
+      <h3>Item Name</h3>
+      <p class="desription">This is item text.</p>
+      {{self.edit_buttons()}}
+    </div>
+    <div_class="carousel__item">
+      <span class="subtext">Category Name</span>
+      <h3>Item Name</h3>
+      <p class="desription">This is item text.</p>
+      {{self.edit_buttons()}}
+    </div>
+    <div_class="carousel__item">
+      <span class="subtext">Category Name</span>
+      <h3>Item Name</h3>
+      <p class="desription">This is item text.</p>
+      {{self.edit_buttons()}}
+    </div>
+    <button class="carousel__btn--right">right</button>
+  </div>
+</div>
+{% endblock %}
