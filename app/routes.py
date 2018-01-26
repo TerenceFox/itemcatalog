@@ -22,19 +22,26 @@ def index():
                     for x in xrange(32))
     #Flow-2 Saved in Flask session object
     session['state'] = state
-    user = User.query.filter_by(id=session['user_id'])
+    users = User.query.all()
     categories = Category.query.all()
     newcategory = newCategoryForm()
     editcategory = editCategoryForm()
     deletecategory = deleteCategoryForm()
-    return render_template('index_loggedin.html',
-                            categories=categories,
-                            users=users,
-                            newcategory=newcategory,
-                            editcategory=editcategory,
-                            deletecategory=deletecategory,
-                            user=user,
-                            STATE=state)
+    if 'username' not in session:
+        return render_template('index.html',
+                                categories=categories,
+                                users=users,
+                                STATE=state)
+    else:
+        user = User.query.filter_by(id=session['user_id'])
+        return render_template('index_loggedin.html',
+                                categories=categories,
+                                users=users,
+                                newcategory=newcategory,
+                                editcategory=editcategory,
+                                deletecategory=deletecategory,
+                                user=user,
+                                STATE=state)
 
 
 @app.route('/gconnect', methods=['POST'])
@@ -150,6 +157,7 @@ def gdisconnect():
         del session['username']
         del session['email']
         del session['picture']
+        del session['user_id']
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -162,7 +170,7 @@ def gdisconnect():
 
 @app.route('/createcategory', methods=['POST'])
 def createNewCategory():
-    user = User.query.filter_by(id=session['user_id'])
+    user = User.query.filter_by(id=session['user_id']).one()
     newcategory = newCategoryForm()
     if request.method == 'POST':
         if newcategory.validate_on_submit():
@@ -184,7 +192,7 @@ def createNewCategory():
 
 @app.route('/editcategory', methods=['POST'])
 def editCategory():
-    user = User.query.filter_by(id=session['user_id'])
+    user = User.query.filter_by(id=session['user_id']).one()
     editcategory = editCategoryForm()
     if request.method == 'POST':
         if editcategory.validate_on_submit():
@@ -204,7 +212,7 @@ def editCategory():
 
 @app.route('/deletecategory', methods=['POST'])
 def deleteCategory():
-    user = User.query.filter_by(id=session['user_id'])
+    user = User.query.filter_by(id=session['user_id']).one()
     deletecategory = deleteCategoryForm()
     if request.method == 'POST':
         if deletecategory.validate_on_submit():
@@ -227,7 +235,7 @@ def deleteCategory():
 def showCategory(id):
     category = Category.query.filter_by(id=id).one()
     items = Item.query.filter_by(category=id).all()
-    user = User.query.filter_by(id=session['user_id']) 
+    user = User.query.filter_by(id=session['user_id']).one()
     users = User.query.all()
     newitem = newItemForm()
     edititem = editItemForm()
