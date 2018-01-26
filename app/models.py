@@ -19,8 +19,7 @@ class User(db.Model):
     password_hash = db.Column(
                               db.String(128),
                               index=True,
-                              unique=True,
-                              nullable=False)
+                              unique=True)
     categories = db.relationship('Category', backref='creator', lazy='dynamic')
     items = db.relationship('Item', backref='creator', lazy='dynamic')
 
