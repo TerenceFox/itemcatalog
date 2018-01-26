@@ -31,12 +31,12 @@ class User(db.Model):
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(
-                         db.String(64),
+                         db.Unicode(64),
                          index=True,
                          unique=True,
                          nullable=False)
     description = db.Column(
-                      db.String(250),
+                      db.Unicode(250),
                       index=True,
                       unique=True,
                       nullable=False)
@@ -45,7 +45,7 @@ class Category(db.Model):
 
 
     def __repr__(self):
-        return '<Category {}>'.format(self.name)
+        return '<Category: {}>'.format(self.name)
 
 
 class Item(db.Model):

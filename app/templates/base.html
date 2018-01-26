@@ -9,9 +9,9 @@
 <body>
   <div class="container">
     <header>
-      <h1>Catalog</h1>
+      <h1><a href="{{url_for('index')}}">Catalog</a></h1>
       <div class="login">
-        <p>Google Sign In</p>
+        {% block login %}{% endblock %}
       </div>
     </header>
     <hr>
