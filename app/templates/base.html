@@ -1,17 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+<html itemscope itemtype="http://schema.org/Article">
 <head>
+
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="google-signin-client_id" content="590332140764-aabn9stbuuhd1l8j6br22nuq4apceaf3.apps.googleusercontent.com">
+
   <title>Catalog</title>
+  <!-- BEGIN Pre-requisites -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+  </script>
+  <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
+  </script>
+  <!-- END Pre-requisites -->
+  <script>
+  function start() {
+    gapi.load('auth2', function() {
+      auth2 = gapi.auth2.init({
+        client_id: '590332140764-aabn9stbuuhd1l8j6br22nuq4apceaf3.apps.googleusercontent.com',
+      });
+    });
+  }
+  </script>
 </head>
 <body>
   <div class="container">
     <header>
       <h1><a href="{{url_for('index')}}">Catalog</a></h1>
       <div class="login">
-        {% block login %}{% endblock %}
+        <div class="g-signin2"></div>
+        <script>
+          $('.g-signin2').click(function() {
+            // signInCallback defined in step 6.
+            auth2.grantOfflineAccess().then(signInCallback);
+          });
+        </script>
       </div>
     </header>
     <hr>
@@ -29,5 +55,33 @@
     </div>
   </div>
   {% block modals %}{% endblock %}
+  <script>
+  function signInCallback(authResult) {
+    if (authResult['code']) {
+
+      // Hide the sign-in button now that the user is authorized, for example:
+      $('.g-signin2').attr('style', 'display: none');
+
+      // Send the code to the server
+      $.ajax({
+        type: 'POST',
+        url: 'http://example.com/storeauthcode',
+        // Always include an `X-Requested-With` header in every AJAX request,
+        // to protect against CSRF attacks.
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        contentType: 'application/octet-stream; charset=utf-8',
+        success: function(result) {
+          // Handle or verify the server response.
+        },
+        processData: false,
+        data: authResult['code']
+      });
+    } else {
+      // There was an error.
+    }
+  }
+  </script>
 </body>
 </html>

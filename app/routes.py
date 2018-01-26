@@ -1,12 +1,25 @@
 from app import app, db
-from flask import render_template, flash, redirect, url_for, request
-from app.forms import newCategoryForm, editCategoryForm, deleteCategoryForm
+from flask import render_template, flash, redirect, url_for, request, session,\
+                  jsonify, make_response, session
+from app.forms import newCategoryForm, editCategoryForm, deleteCategoryForm, \
+                      newItemForm, editItemForm, deleteItemForm
 from models import Category, User, Item
+import random, string, json, httplib2, requests
+
+CLIENT_SECRET_FILE = 'app/client_secret.json'
+CLIENT_ID = json.loads(
+    open('app/client_secret.json', 'r').read())['web']['client_id']
+APPLICATION_NAME = "Item Catalog"
 
 
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
+    #Generate state token
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                    for x in xrange(32))
+    #Flow-2 Saved in Flask session object
+    session['state'] = state
     user = User.query.get(1) #TODO: This needs to inherit from the login session
     users = User.query.all()
     categories = Category.query.all()
@@ -19,7 +32,21 @@ def index():
                             newcategory=newcategory,
                             editcategory=editcategory,
                             deletecategory=deletecategory,
-                            user=user)
+                            user=user,
+                            STATE=state)
+
+
+@app.route('/gconnect', methods=['POST'])
+def gConnect():
+    # Validate state token
+    if request.args.get('state') != login_session['state']:
+        response = make_response(json.dumps('Invalid state parameter.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    # Obtain authorization code
+    code = request.data
+    print code
+
 
 
 @app.route('/createcategory', methods=['POST'])
@@ -89,7 +116,17 @@ def deleteCategory():
 def showCategory(id):
     category = Category.query.filter_by(id=id).one()
     items = Item.query.filter_by(category=id).all()
+    user = User.query.get(1) #TODO: This needs to inherit from the login session
+    users = User.query.all()
+    newitem = newItemForm()
+    edititem = editItemForm()
+    deleteitem = deleteItemForm()
     return render_template('category_loggedin.html',
+                            users=users,
+                            user=user,
                             category=category,
                             items=items,
-                            id=id)
+                            id=id,
+                            newitem=newitem,
+                            edititem=edititem,
+                            deleteitem=deleteitem)

@@ -1,4 +1,4 @@
-{% extends category.html %}
+{% extends "category.html" %}
 
 {% block login %}
 <div class="userinfo">
@@ -16,5 +16,56 @@
     <h1>+</h1>
     <h3>Add New</h3>
   </a>
+</div>
+{% endblock %}
+
+{% block modals %}
+<div class="new_item modal">
+  <form action="#" method="post">
+    {{ newitem.hidden_tag() }}
+    <p>
+      {{ newitem.name.label }}<br>
+      {{ newitem.name(size=32) }}
+    </p>
+    <p>
+      {{ newitem.description.label }}<br>
+      {{ newitem.description(size=32) }}
+    </p>
+    <p>
+      {{ newitem.picture.label }}<br>
+      {{ newitem.picture(size=32) }}
+    </p>
+    {{ newitem.submit() }}
+  </form>
+</div>
+<div class="edit_item modal">
+  <form action="#" method="post">
+    {{ edititem.hidden_tag() }}
+    <p>
+      {{ edititem.id }}
+    </p>
+    <p>
+      {{ edititem.name.label }}<br>
+      {{ edititem.name(size=32) }}
+    </p>
+    <p>
+      {{ edititem.description.label }}<br>
+      {{ edititem.description(size=32) }}
+    </p>
+    <p>
+      {{ edititem.picture.label }}<br>
+      {{ edititem.picture(size=32) }}
+    </p>
+    {{ edititem.submit() }}
+  </form>
+</div>
+<div class="delete_item modal">
+<form action="#" method="post">
+  {{ deleteitem.hidden_tag() }}
+  {{ deleteitem.id }} {{ deleteitem.submit() }}
+  <a href="{{url_for('index')}}">
+    <input type="button" value="&times; CANCEL">
+  </a>
+</form>
 </div>
 {% endblock %}
