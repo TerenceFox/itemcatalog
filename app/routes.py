@@ -115,7 +115,7 @@ def createUser(login_session):
     newUser = User(username=session['username'],
                    email=session['email'],
                    picture=session['picture'],
-                   password_hash=session['state'])
+                   password_hash="notused")
     db.session.add(newUser)
     db.session.commit()
     user = db.session.query(User).filter_by(email=session['email']).one()
