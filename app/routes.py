@@ -158,10 +158,22 @@ def gdisconnect():
         del session['picture']
         del session['user_id']
         response = 'Successfully disconnected.'
+        flash(response)
+        return redirect(url_for('index'))
+    elif result['status'] == '400':
+        del session['access_token']
+        del session['gplus_id']
+        del session['username']
+        del session['email']
+        del session['picture']
+        del session['user_id']
+        response = 'Login session has timed out. Please sign in again.'
+        flash(response)
+        return redirect(url_for('index'))
     else:
         response = 'Failed to revoke token for given user.'
-    flash(response)
-    return redirect(url_for('index'))
+        flash(response)
+        return redirect(url_for('index'))
 
 
 @app.route('/createcategory', methods=['POST'])
@@ -177,7 +189,7 @@ def createNewCategory():
             )
             db.session.add(category)
             db.session.commit()
-            print "Successfully added Category"
+            print "Successfully added category"
             print "User: {}".format(user.id)
             print "Name: {}".format(newcategory.name.data)
             print "Description: {}".format(newcategory.description.data)
@@ -197,7 +209,7 @@ def editCategory():
             category.description = editcategory.description.data
             db.session.add(category)
             db.session.commit()
-            print "Edit Category"
+            print "Edit category"
             print "User: {}".format(category.id)
             print "Name: {}".format(category.name)
             print "Description: {}".format(category.description)
@@ -218,7 +230,7 @@ def deleteCategory():
             for i in items:
                 db.session.delete(i)
             db.session.commit()
-            print "Delete Category"
+            print "Delete category"
             print "User: {}".format(category.id)
             print "Name: {}".format(category.name)
             print "Description: {}".format(category.description)
@@ -231,29 +243,38 @@ def deleteCategory():
 def showCategory(id):
     category = Category.query.filter_by(id=id).one()
     items = Item.query.filter_by(category=id).all()
-    user = User.query.filter_by(id=session['user_id']).one()
-    users = User.query.all()
-    newitem = newItemForm()
-    edititem = editItemForm()
-    deleteitem = deleteItemForm()
-    return render_template('category_loggedin.html',
-                            users=users,
-                            user=user,
-                            category=category,
-                            items=items,
-                            id=id,
-                            newitem=newitem,
-                            edititem=edititem,
-                            deleteitem=deleteitem)
+    state = session['state']
+    if 'username' in session:
+        user = User.query.filter_by(id=session['user_id']).one()
+        if user.id == category.user_id:
+            newitem = newItemForm()
+            edititem = editItemForm()
+            deleteitem = deleteItemForm()
+            return render_template('category_loggedin.html',
+                                   STATE=state,
+                                   user=user,
+                                   category=category,
+                                   items=items,
+                                   id=id,
+                                   newitem=newitem,
+                                   edititem=edititem,
+                                   deleteitem=deleteitem)
+
+    else:
+        return render_template('category.html',
+                               STATE=state,
+                               category=category,
+                               items=items,
+                               id=id)
 
 
 @app.route('/createitem/', methods=['POST'])
 def createItem():
     user = User.query.filter_by(id=session['user_id']).one()
     newitem = newItemForm()
+    category_id = request.args.get('id')
     if request.method == 'POST':
         if newitem.validate_on_submit():
-            category_id = request.args.get('id')
             item = Item(
             name=newitem.name.data,
             description=newitem.description.data,
@@ -263,10 +284,40 @@ def createItem():
             )
             db.session.add(item)
             db.session.commit()
-            print "Successfully added Item"
+            print "Successfully added item"
             print "User: {}".format(item.user_id)
             print "Category: {}".format(item.category)
             print "Name: {}".format(item.name)
             return redirect(url_for('showCategory', id=category_id))
         else:
             return redirect(url_for('showCategory', id=category_id))
+
+
+@app.route('/edititem/', methods=['POST'])
+def editItem():
+    user = User.query.filter_by(id=session['user_id']).one()
+    edititem = editItemForm()
+    category_id = request.args.get('id')
+    if request.method == 'POST':
+        if edititem.validate_on_submit():
+            item = Item.query.filter_by(id=edititem.id.data).one()
+            item.name = edititem.name.data
+            item.description = edititem.description.data
+            if edititem.picture.data:
+                item.picture = edititem.picture.data
+            db.session.add(item)
+            db.session.commit()
+            print "Successfully edited item"
+            print "User: {}".format(item.user_id)
+            print "Category: {}".format(item.category)
+            print "Name: {}".format(item.name)
+            return redirect(url_for('showCategory', id=category_id))
+        else:
+            return redirect(url_for('showCategory', id=category_id))
+
+
+@app.route('/deleteitem', methods=['POST'])
+def deleteItem():
+    user = User.query.filter_by(id=session['user_id']).one()
+    edititem = editItemForm()
+    category_id = request.args.get('id')

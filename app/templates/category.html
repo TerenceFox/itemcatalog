@@ -1,7 +1,17 @@
 {% extends "base.html" %}
 
 {% block login %}
-<button>GOOGLE SIGN IN</button>
+<button id="signinButton">Sign in with Google</button>
+<script>
+  $('#signinButton').click(function() {
+    // signInCallback defined in step 6.
+    auth2.grantOfflineAccess().then(signInCallback);
+  });
+</script>
+{% endblock %}
+
+{% block callback %}
+window.location.href = "{{url_for('showCategory', id=id)}}";
 {% endblock %}
 
 {% block content %}
