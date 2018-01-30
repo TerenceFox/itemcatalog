@@ -21,7 +21,7 @@
 
 {% block modals %}
 <div class="new_item modal">
-  <form action="#" method="post">
+  <form action="{{url_for('createItem', id=id)}}" method="post">
     {{ newitem.hidden_tag() }}
     <p>
       {{ newitem.name.label }}<br>

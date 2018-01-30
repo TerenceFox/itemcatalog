@@ -16,7 +16,9 @@
   {% for i in items %}
   <div class="item-grid__item">
     <h3>{{i.name}}</h3>
+    {% if i.picture %}
     <img src="{{i.picture}}" alt="item image" height="100" width="100">
+    {% endif %}
     <p class="description">{{i.description}}</p>
     <div class="edit_buttons">
       <button class="edit" name="edit" value="{{i.id}}"></button>

@@ -213,7 +213,10 @@ def deleteCategory():
     if request.method == 'POST':
         if deletecategory.validate_on_submit():
             category = Category.query.filter_by(id=deletecategory.id.data).one()
+            items = Item.query.filter_by(category=category.id).all()
             db.session.delete(category)
+            for i in items:
+                db.session.delete(i)
             db.session.commit()
             print "Delete Category"
             print "User: {}".format(category.id)
@@ -244,24 +247,26 @@ def showCategory(id):
                             deleteitem=deleteitem)
 
 
-@app.route('/createitem/')
+@app.route('/createitem/', methods=['POST'])
 def createItem():
     user = User.query.filter_by(id=session['user_id']).one()
     newitem = newItemForm()
     if request.method == 'POST':
         if newitem.validate_on_submit():
+            category_id = request.args.get('id')
             item = Item(
             name=newitem.name.data,
             description=newitem.description.data,
             picture=newitem.picture.data,
+            category=category_id,
             user_id=user.id
             )
             db.session.add(item)
             db.session.commit()
-            print "Successfully added Category"
-            print "User: {}".format(user.id)
-            print "Name: {}".format(newcategory.name.data)
-            print "Description: {}".format(newcategory.description.data)
-            return redirect(url_for('index'))
+            print "Successfully added Item"
+            print "User: {}".format(item.user_id)
+            print "Category: {}".format(item.category)
+            print "Name: {}".format(item.name)
+            return redirect(url_for('showCategory', id=category_id))
         else:
-            return redirect(url_for('index'))
+            return redirect(url_for('showCategory', id=category_id))

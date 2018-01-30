@@ -61,8 +61,7 @@ class Item(db.Model):
                       nullable=False)
     picture = db.Column(
                         db.Unicode(250),
-                        index=True,
-                        unique=True)
+                        index=True,)
     category = db.Column(db.Integer, db.ForeignKey('category.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
