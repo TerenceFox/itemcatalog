@@ -31,13 +31,7 @@
     <header>
       <h1><a href="{{url_for('index')}}">Catalog</a></h1>
       <div class="login">
-        <button id="signinButton">Sign in with Google</button>
-        <script>
-          $('#signinButton').click(function() {
-            // signInCallback defined in step 6.
-            auth2.grantOfflineAccess().then(signInCallback);
-          });
-        </script>
+        {% block login %}{% endblock %}
       </div>
     </header>
     <hr>
@@ -72,6 +66,7 @@
         success: function(result) {
           if (result) {
           console.log("Success");
+          window.location.href = "/index";
       } else if (authResult['error']) {
     console.log('There was an error: ' + authResult['error']);
         }

@@ -27,13 +27,8 @@ def index():
     newcategory = newCategoryForm()
     editcategory = editCategoryForm()
     deletecategory = deleteCategoryForm()
-    if 'username' not in session:
-        return render_template('index.html',
-                                categories=categories,
-                                users=users,
-                                STATE=state)
-    else:
-        user = User.query.filter_by(id=session['user_id'])
+    if 'username' in session:
+        user = User.query.filter_by(id=session['user_id']).one()
         return render_template('index_loggedin.html',
                                 categories=categories,
                                 users=users,
@@ -42,6 +37,12 @@ def index():
                                 deletecategory=deletecategory,
                                 user=user,
                                 STATE=state)
+    else:
+        return render_template('index.html',
+                                categories=categories,
+                                users=users,
+                                STATE=state)
+
 
 
 @app.route('/gconnect', methods=['POST'])
@@ -102,13 +103,11 @@ def gConnect():
     session['username'] = data['name']
     session['picture'] = data['picture']
     session['email'] = data['email']
-
     user_id = getUserID(session['email'])
     if not user_id:
         user_id = createUser(session)
     session['user_id'] = user_id
     return redirect(url_for('index'))
-
 
 # User Helper Functions
 def createUser(login_session):
@@ -158,14 +157,11 @@ def gdisconnect():
         del session['email']
         del session['picture']
         del session['user_id']
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        response = 'Successfully disconnected.'
     else:
-        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
-        response.headers['Content-Type'] = 'application/json'
-        return response
-
+        response = 'Failed to revoke token for given user.'
+    flash(response)
+    return redirect(url_for('index'))
 
 
 @app.route('/createcategory', methods=['POST'])
@@ -228,9 +224,6 @@ def deleteCategory():
         return redirect(url_for('index'))
 
 
-
-
-
 @app.route('/category/<string:id>')
 def showCategory(id):
     category = Category.query.filter_by(id=id).one()
@@ -249,3 +242,26 @@ def showCategory(id):
                             newitem=newitem,
                             edititem=edititem,
                             deleteitem=deleteitem)
+
+
+@app.route('/createitem/')
+def createItem():
+    user = User.query.filter_by(id=session['user_id']).one()
+    newitem = newItemForm()
+    if request.method == 'POST':
+        if newitem.validate_on_submit():
+            item = Item(
+            name=newitem.name.data,
+            description=newitem.description.data,
+            picture=newitem.picture.data,
+            user_id=user.id
+            )
+            db.session.add(item)
+            db.session.commit()
+            print "Successfully added Category"
+            print "User: {}".format(user.id)
+            print "Name: {}".format(newcategory.name.data)
+            print "Description: {}".format(newcategory.description.data)
+            return redirect(url_for('index'))
+        else:
+            return redirect(url_for('index'))

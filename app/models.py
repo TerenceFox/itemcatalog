@@ -50,17 +50,17 @@ class Category(db.Model):
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(
-                         db.String(64),
+                         db.Unicode(64),
                          index=True,
                          unique=True,
                          nullable=False)
     description = db.Column(
-                      db.String(250),
+                      db.Unicode(250),
                       index=True,
                       unique=True,
                       nullable=False)
     picture = db.Column(
-                        db.String(250),
+                        db.Unicode(250),
                         index=True,
                         unique=True)
     category = db.Column(db.Integer, db.ForeignKey('category.id'))

@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 
 {% block login %}
-<button>GOOGLE SIGN IN</button>
+<button id="signinButton">Sign in with Google</button>
+<script>
+  $('#signinButton').click(function() {
+    // signInCallback defined in step 6.
+    auth2.grantOfflineAccess().then(signInCallback);
+  });
+</script>
 {% endblock %}
 
 {% block content %}
@@ -20,7 +26,6 @@
       <button class="delete" name="delete" value="{{i.id}}"></button>
     </div>
   {% endfor %}
-  {% block addnew %}{% endblock %}
   </div>
   {% endif %}
 <div class="carousel">
