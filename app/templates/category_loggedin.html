@@ -60,7 +60,7 @@
   </form>
 </div>
 <div class="delete_item modal">
-<form action="#" method="post">
+<form action="{{url_for('deleteItem', id=id)}}" method="post">
   {{ deleteitem.hidden_tag() }}
   {{ deleteitem.id }} {{ deleteitem.submit() }}
   <a href="{{url_for('index')}}">

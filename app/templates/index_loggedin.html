@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "index.html" %}
 
 {% block login %}
 <div class="userinfo">
@@ -10,53 +10,15 @@
 </div>
 {% endblock %}
 
-{% block content %}
-<div class="category-grid">
-  {% if categories %}
-  {% for i in categories %}
-  <div class="category-grid__category">
-    <span class="subtext">{{users[(i.user_id - 1)].username}}</span>
-    <h3>
-      <a href="{{url_for('showCategory', id=i.id)}}">{{i.name}}</a>
-    </h3>
-    <p class="description">{{i.description}}</p>
-    <input type="button" value="{{i.id}}">
-    <div class="edit_buttons">
-      <button class="edit" name="edit" value="{{i.id}}"></button>
-      <button class="delete" name="delete" value="{{i.id}}"></button>
-    </div>
-  {% endfor %}
-  <div class="category-grid__category addnew">
-    <a href="#">
-      <h1>+</h1>
-      <h3>Add New</h3>
-    </a>
-  </div>
-  </div>
-  {% endif %}
-<div class="carousel">
-  <h1>Recent Items</h1>
-  <button class="carousel__btn--left">left</button>
-  <div class="carousel__items">
-    <div_class="carousel__item">
-      <span class="subtext">Item</span>
-      <h3>Item Name</h3>
-      <p class="desription">This is item text.</p>
-    </div>
-    <div_class="carousel__item">
-      <span class="subtext">Category Name</span>
-      <h3>Item Name</h3>
-      <p class="desription">This is item text.</p>
-    </div>
-    <div_class="carousel__item">
-      <span class="subtext">Category Name</span>
-      <h3>Item Name</h3>
-      <p class="desription">This is item text.</p>
-    </div>
-    <button class="carousel__btn--right">right</button>
-  </div>
+{% block addnew %}
+<div class="category-grid__category addnew">
+  <a href="#">
+    <h1>+</h1>
+    <h3>Add New</h3>
+  </a>
 </div>
 {% endblock %}
+
 
 {% block modals %}
 <div class="new_category modal">

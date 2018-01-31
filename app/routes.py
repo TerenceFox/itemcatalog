@@ -24,6 +24,7 @@ def index():
     session['state'] = state
     users = User.query.all()
     categories = Category.query.all()
+    items = Item.query.all()
     newcategory = newCategoryForm()
     editcategory = editCategoryForm()
     deletecategory = deleteCategoryForm()
@@ -31,7 +32,10 @@ def index():
         user = User.query.filter_by(id=session['user_id']).one()
         return render_template('index_loggedin.html',
                                 categories=categories,
+                                Category=Category,
                                 users=users,
+                                User=User,
+                                items=items,
                                 newcategory=newcategory,
                                 editcategory=editcategory,
                                 deletecategory=deletecategory,
@@ -41,7 +45,9 @@ def index():
         return render_template('index.html',
                                 categories=categories,
                                 users=users,
+                                items=items,
                                 STATE=state)
+
 
 
 
@@ -318,6 +324,14 @@ def editItem():
 
 @app.route('/deleteitem', methods=['POST'])
 def deleteItem():
-    user = User.query.filter_by(id=session['user_id']).one()
-    edititem = editItemForm()
     category_id = request.args.get('id')
+    deleteitem = deleteItemForm()
+    if request.method == 'POST':
+        if deleteitem.validate_on_submit():
+            item = Item.query.filter_by(id=deleteitem.id.data).one()
+            db.session.delete(item)
+            db.session.commit()
+            print "Item {} Deleted".format(item.name)
+            return redirect(url_for('showCategory', id=category_id))
+    else:
+        return redirect(url_for('showCategory', id=category_id))
