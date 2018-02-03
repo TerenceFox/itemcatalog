@@ -4,7 +4,11 @@ from flask import render_template, flash, redirect, url_for, request, session,\
 from app.forms import newCategoryForm, editCategoryForm, deleteCategoryForm, \
                       newItemForm, editItemForm, deleteItemForm
 from models import Category, User, Item
-import random, string, json, httplib2, requests
+import random
+import string
+import json
+import httplib2
+import requests
 from oauth2client import client
 
 
@@ -12,6 +16,11 @@ CLIENT_SECRET_FILE = 'app/client_secret.json'
 CLIENT_ID = json.loads(
     open('app/client_secret.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Item Catalog"
+
+@app.route('/item/<int:id>/JSON')
+def itemJSON(id):
+    item = Item.query.get(id)
+    return jsonify(Item = item.serialize)
 
 
 @app.route('/', methods=['GET'])
@@ -31,22 +40,24 @@ def index():
     if 'username' in session:
         user = User.query.filter_by(id=session['user_id']).one()
         return render_template('index_loggedin.html',
-                                categories=categories,
-                                Category=Category,
-                                users=users,
-                                User=User,
-                                items=items,
-                                newcategory=newcategory,
-                                editcategory=editcategory,
-                                deletecategory=deletecategory,
-                                user=user,
-                                STATE=state)
+                               categories=categories,
+                               Category=Category,
+                               users=users,
+                               User=User,
+                               items=items,
+                               newcategory=newcategory,
+                               editcategory=editcategory,
+                               deletecategory=deletecategory,
+                               user=user,
+                               STATE=state)
     else:
         return render_template('index.html',
-                                categories=categories,
-                                users=users,
-                                items=items,
-                                STATE=state)
+                               categories=categories,
+                               Category=Category,
+                               users=users,
+                               User=User,
+                               items=items,
+                               STATE=state)
 
 
 
@@ -145,7 +156,8 @@ def gdisconnect():
     access_token = session.get('access_token')
     if access_token is None:
         print 'Access Token is None'
-        response = make_response(json.dumps('Current user not connected.'), 401)
+        response = make_response(json.dumps('Current user not connected.'),
+                                            401)
         response.headers['Content-Type'] = 'application/json'
         return response
     print 'In gdisconnect access token is {}'.format(access_token)
@@ -163,7 +175,7 @@ def gdisconnect():
         del session['email']
         del session['picture']
         del session['user_id']
-        response = 'Successfully disconnected.'
+        response = 'Logged out.'
         flash(response)
         return redirect(url_for('index'))
     elif result['status'] == '400':
@@ -173,7 +185,7 @@ def gdisconnect():
         del session['email']
         del session['picture']
         del session['user_id']
-        response = 'Login session has timed out. Please sign in again.'
+        response = 'Logged out.'
         flash(response)
         return redirect(url_for('index'))
     else:
@@ -201,6 +213,9 @@ def createNewCategory():
             print "Description: {}".format(newcategory.description.data)
             return redirect(url_for('index'))
         else:
+            for field, error in newcategory.errors.items():
+                for i in error:
+                    flash("ERROR: {} - {}".format(field, i))
             return redirect(url_for('index'))
 
 
@@ -208,39 +223,45 @@ def createNewCategory():
 def editCategory():
     user = User.query.filter_by(id=session['user_id']).one()
     editcategory = editCategoryForm()
-    if request.method == 'POST':
-        if editcategory.validate_on_submit():
-            category = Category.query.filter_by(id=editcategory.id.data).one()
-            category.name = editcategory.name.data
-            category.description = editcategory.description.data
+    if editcategory.validate_on_submit():
+        category = Category.query.filter_by(id=editcategory.editID.data).one()
+        category.name = editcategory.name.data
+        category.description = editcategory.description.data
+        try:
             db.session.add(category)
             db.session.commit()
-            print "Edit category"
-            print "User: {}".format(category.id)
-            print "Name: {}".format(category.name)
-            print "Description: {}".format(category.description)
+        except:
+            db.session.rollback()
+            flash("ERROR: Name and description must be unique.")
             return redirect(url_for('index'))
+        print "Successfully edited category"
+        print "User: {}".format(category.id)
+        print "Name: {}".format(category.name)
+        print "Description: {}".format(category.description)
+        return redirect(url_for('index'))
     else:
+        for field, error in editcategory.errors.items():
+            for i in error:
+                flash("ERROR: {} - {}".format(field, i))
         return redirect(url_for('index'))
 
 
 @app.route('/deletecategory', methods=['POST'])
 def deleteCategory():
-    user = User.query.filter_by(id=session['user_id']).one()
     deletecategory = deleteCategoryForm()
-    if request.method == 'POST':
-        if deletecategory.validate_on_submit():
-            category = Category.query.filter_by(id=deletecategory.id.data).one()
-            items = Item.query.filter_by(category=category.id).all()
-            db.session.delete(category)
+    if deletecategory.validate_on_submit():
+        category = Category.query.filter_by(id=deletecategory.deleteID.data).one()
+        items = Item.query.filter_by(category=category.id)
+        print "Delete category"
+        print "User: {}".format(category.id)
+        print "Name: {}".format(category.name)
+        print "Description: {}".format(category.description)
+        if items:
             for i in items:
                 db.session.delete(i)
-            db.session.commit()
-            print "Delete category"
-            print "User: {}".format(category.id)
-            print "Name: {}".format(category.name)
-            print "Description: {}".format(category.description)
-            return redirect(url_for('index'))
+        db.session.delete(category)
+        db.session.commit()
+        return redirect(url_for('index'))
     else:
         return redirect(url_for('index'))
 
@@ -252,24 +273,24 @@ def showCategory(id):
     state = session['state']
     if 'username' in session:
         user = User.query.filter_by(id=session['user_id']).one()
-        if user.id == category.user_id:
-            newitem = newItemForm()
-            edititem = editItemForm()
-            deleteitem = deleteItemForm()
-            return render_template('category_loggedin.html',
-                                   STATE=state,
-                                   user=user,
-                                   category=category,
-                                   items=items,
-                                   id=id,
-                                   newitem=newitem,
-                                   edititem=edititem,
-                                   deleteitem=deleteitem)
-
+        newitem = newItemForm()
+        edititem = editItemForm()
+        deleteitem = deleteItemForm()
+        return render_template('category_loggedin.html',
+                               STATE=state,
+                               user=user,
+                               category=category,
+                               Category=Category,
+                               items=items,
+                               id=id,
+                               newitem=newitem,
+                               edititem=edititem,
+                               deleteitem=deleteitem)
     else:
         return render_template('category.html',
                                STATE=state,
                                category=category,
+                               Category=Category,
                                items=items,
                                id=id)
 
@@ -296,6 +317,9 @@ def createItem():
             print "Name: {}".format(item.name)
             return redirect(url_for('showCategory', id=category_id))
         else:
+            for field, error in newitem.errors.items():
+                for i in error:
+                    flash("ERROR: {} - {}".format(field, i))
             return redirect(url_for('showCategory', id=category_id))
 
 
@@ -306,7 +330,7 @@ def editItem():
     category_id = request.args.get('id')
     if request.method == 'POST':
         if edititem.validate_on_submit():
-            item = Item.query.filter_by(id=edititem.id.data).one()
+            item = Item.query.filter_by(id=edititem.editID.data).one()
             item.name = edititem.name.data
             item.description = edititem.description.data
             if edititem.picture.data:
@@ -319,6 +343,9 @@ def editItem():
             print "Name: {}".format(item.name)
             return redirect(url_for('showCategory', id=category_id))
         else:
+            for field, error in edititem.errors.items():
+                for i in error:
+                    flash("ERROR: {} - {}".format(field, i))
             return redirect(url_for('showCategory', id=category_id))
 
 
@@ -328,7 +355,7 @@ def deleteItem():
     deleteitem = deleteItemForm()
     if request.method == 'POST':
         if deleteitem.validate_on_submit():
-            item = Item.query.filter_by(id=deleteitem.id.data).one()
+            item = Item.query.filter_by(id=deleteitem.deleteID.data).one()
             db.session.delete(item)
             db.session.commit()
             print "Item {} Deleted".format(item.name)

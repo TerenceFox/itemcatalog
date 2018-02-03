@@ -3,7 +3,10 @@
 <html itemscope itemtype="http://schema.org/Article">
 <head>
 
-
+  <link type="text/css" rel="stylesheet" href="{{url_for('static', filename="style.css")}}"/>
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -15,6 +18,7 @@
   </script>
   <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
   </script>
+
   <!-- END Pre-requisites -->
   <script>
   function start() {
@@ -29,27 +33,34 @@
 <body>
   <div class="container">
     <header>
-      <h1><a href="{{url_for('index')}}">Catalog</a></h1>
+      <div class ="title">
+        <h1><a href="{{url_for('index')}}">Catalog</a></h1>
+      </div>
       <div class="login">
         {% block login %}{% endblock %}
       </div>
     </header>
-    <hr>
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-<ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-{% endwith %}
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="messages">
+    <span id="closeMessage" class="material-icons">close</span>
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    </div>
+    {% endif %}
+    {% endwith %}
 
     {% block content %}{% endblock %}
     </div>
   </div>
   {% block modals %}{% endblock %}
   <script>
+  $( "#closeMessage" ).click( function() {
+    $( ".messages").css("display", "none");
+  });
   function signInCallback(authResult) {
     if (authResult['code']) {
 
@@ -77,5 +88,6 @@
     }
   }
   </script>
+  {% block hidebuttons %}{% endblock %}
 </body>
 </html>

@@ -2,65 +2,125 @@
 
 {% block login %}
 <div class="userinfo">
-<img src="{{user.picture}}" width="100" height="100">
-<p>
-  {{user.username}}
-</p>
+<img class ="user_photo" src="{{user.picture}}">
+<div class="login_text">
+{{user.username}}
+<br>
+<button>
 <a href="{{url_for('gdisconnect')}}">Log out</a>
+</button>
+</div>
 </div>
 {% endblock %}
 
 {% block addnew %}
-<div class="category-grid__category addnew">
-  <a href="#">
-    <h1>+</h1>
+  <div class="category-grid__category addnew">
+    <i class="material-icons md-48">add_box</i>
     <h3>Add New</h3>
-  </a>
-</div>
+  </div>
 {% endblock %}
 
 
 {% block modals %}
-<div class="new_category modal">
-<form action="{{url_for('createNewCategory')}}" method="post">
-  {{ newcategory.hidden_tag() }}
-  <p>
-    {{ newcategory.name.label }}<br>
-    {{ newcategory.name(size=32) }}
-  </p>
-  <p>
-    {{ newcategory.description.label }}<br>
-    {{ newcategory.description(size=32) }}
-  </p>
-  {{ newcategory.submit() }}
-</form>
+<div id="newCategory" class="modal">
+  <div class="content">
+    <form action="{{url_for('createNewCategory')}}" method="post">
+      {{ newcategory.hidden_tag() }}
+      <h1> Create New Category</h1>
+      <div class="form_fields">
+        <p>
+          {{ newcategory.name.label }}<br>
+          {{ newcategory.name(size=32) }}
+        </p>
+        <p>
+          {{ newcategory.description.label }}<br>
+          {{ newcategory.description }}
+        </p>
+      </div>
+      <div class="form_buttons">
+        <button type="button" class="cancelBtn"> CANCEL</button>
+        {{ newcategory.submit() }}
+      </div>
+    </form>
+  </div>
 </div>
 
-<div class="edit_category modal">
-<form action="{{url_for('editCategory')}}" method="post">
-  {{ editcategory.hidden_tag() }}
-  <p>
-    {{ editcategory.id }}
-  </p>
-  <p>
-    {{ editcategory.name.label }}<br>
-    {{ editcategory.name(size=32) }}
-  </p>
-  <p>
-    {{ editcategory.description.label }}<br>
-    {{ editcategory.description(size=32) }}
-  </p>
-  {{ editcategory.submit() }}
-</form>
+<div id="editCategory" class="modal">
+  <div class="content">
+    <form action="{{url_for('editCategory')}}" method="post">
+      {{ editcategory.hidden_tag() }}
+      {{ editcategory.id }}
+      <h1> Edit Category </h1>
+      <div class="form_fields">
+        <p>
+          {{ editcategory.name.label }}<br>
+          {{ editcategory.name(size=32) }}
+        </p>
+        <p>
+          {{ editcategory.description.label }}<br>
+          {{ editcategory.description(size=32) }}
+        </p>
+      </div>
+      <div class="form_buttons">
+        <button type="button" class="cancelBtn"> CANCEL</button>
+        {{ editcategory.submit() }}
+      </div>
+    </form>
+  </div>
 </div>
 
-<div class="delete_category modal">
-<form action="{{url_for('deleteCategory')}}" method="post">
-  {{ deletecategory.hidden_tag() }}
-  {{ deletecategory.id }} {{ deletecategory.submit() }}
-  <a href="{{url_for('index')}}">
-    <input type="button" value="&times; CANCEL">
-  </a>
-</form>
-</div>
+
+<div id="deleteCategory" class="modal">
+  <div class="content">
+    <form action="{{url_for('deleteCategory')}}" method="post">
+      {{ deletecategory.hidden_tag() }}
+      <h1>Delete Category?</h1>
+      <p style="padding: 10px;">
+        Deleting this category will also delete all the items associated with it.
+      </p>
+      <div class="form_buttons" style="margin-left: 55%;">
+        <button type="button" class="cancelBtn"> CANCEL</button>
+        {{ deletecategory.submit() }}
+      </div>
+    </form>
+  </div>
+<div>
+<script>
+// New Category Modal function
+$( ".addnew" ).click( function() {
+  $( "#newCategory" ).css("display", "block");
+});
+
+
+//Edit Category Modal function
+$("button[name=edit]").click( function (){
+  //Get ID and current name and description for category
+  var id = $( this ).val();
+  var nameSelector = "#categoryName" + id;
+  var descriptionSelector = "#categoryDescription" + id;
+  var name = $(nameSelector).text()
+  var descr = $(descriptionSelector).text()
+
+  //Populate form fields with existing values
+  $( "#editID" ).val( id );
+  $( "input[name=name]" ).val(name);
+  $( "textarea[name=description]" ).val(descr);
+
+  $("#editCategory" ).css("display", "block" );
+});
+
+//Delete Category Modal function
+$("button[name=delete]").click( function (){
+  //Get ID and current name and description for category
+  var id = $( this ).val();
+  $( "#deleteID" ).val( id );
+  $("#deleteCategory" ).css("display", "block" );
+});
+
+$( ".cancelBtn").click( function() {
+  $( ".modal" ).css("display", "none");
+})
+
+</script>
+{% block hidebuttons %}{% endblock %}
 {% endblock %}

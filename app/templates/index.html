@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 
 {% block login %}
-<button id="signinButton">Sign in with Google</button>
+<input id="signinButton" type=image src="{{url_for('static', filename="img/btn_google_signin_light_normal_web.png")}}">
 <script>
+  $('#signinButton').hover( function(){
+    $( this ).attr("src", "{{url_for('static', filename="img/btn_google_signin_light_pressed_web.png")}}")
+  }, function() {
+    $( this ).attr("src", "{{url_for('static', filename="img/btn_google_signin_light_normal_web.png")}}")
+  }
+  );
   $('#signinButton').click(function() {
     // signInCallback defined in step 6.
     auth2.grantOfflineAccess().then(signInCallback);
@@ -22,19 +28,22 @@ window.location.href = "{{url_for('index')}}";
     {% set categoryuser = User.query.get(i.user_id) %}
     <span class="subtext">{{categoryuser.username}}</span>
     <h3>
-      <a href="{{url_for('showCategory', id=i.id)}}">{{i.name}}</a>
+      <a id="categoryName{{i.id}}" href="{{url_for('showCategory', id=i.id)}}">{{i.name}}</a>
     </h3>
-    <p class="description">{{i.description}}</p>
-    <input type="button" value="{{i.id}}">
+    <p id="categoryDescription{{i.id}}" class="description">{{i.description}}</p>
+    <input class="id_button" type="button" value="{{i.id}}">
+
+    {% if user and user.id == i.user_id %}
     <div class="edit_buttons">
-      <button class="edit" name="edit" value="{{i.id}}"></button>
-      <button class="delete" name="delete" value="{{i.id}}"></button>
+      <button class="edit material-icons md-dark" name="edit" value="{{i.id}}">edit</button>
+      <button class="delete material-icons md-dark" name="delete" value="{{i.id}}">delete</button>
     </div>
+    {% endif %}
+  </div>
   {% endfor %}
+  {% endif %}
   {% block addnew %}{% endblock %}
   </div>
-</div>
-  {% endif %}
 <div class="recent_items">
   <h1>Recent Items</h1>
   <div class="recent_items__row">
@@ -44,10 +53,15 @@ window.location.href = "{{url_for('index')}}";
       <span class="subtext">{{itemcategory.name}}</span>
       <h3>{{i.name}}</h3>
       {% if i.picture %}
-      <img src="{{i.picture}}" alt="item image" height="100" width="100">
+      <img src="{{i.picture}}" alt="item image">
       {% endif %}
-      <p class="desription">{{i.description}}</p>
+      <p class="description">{{i.description}}</p>
     </div>
     {% endfor %}
 </div>
+{% endblock %}
+{% block hidebuttons %}
+<script>
+$('div.edit_buttons').css("display", "none");
+</script>
 {% endblock %}

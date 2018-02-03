@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 
 {% block login %}
-<button id="signinButton">Sign in with Google</button>
+<input id="signinButton" type=image src="{{url_for('static', filename="img/btn_google_signin_light_normal_web.png")}}">
 <script>
+  $('#signinButton').hover( function(){
+    $( this ).attr("src", "{{url_for('static', filename="img/btn_google_signin_light_pressed_web.png")}}")
+  }, function() {
+    $( this ).attr("src", "{{url_for('static', filename="img/btn_google_signin_light_normal_web.png")}}")
+  }
+  );
   $('#signinButton').click(function() {
     // signInCallback defined in step 6.
     auth2.grantOfflineAccess().then(signInCallback);
@@ -15,29 +21,35 @@ window.location.href = "{{url_for('showCategory', id=id)}}";
 {% endblock %}
 
 {% block content %}
+<div class="item-grid__header">
+  <h1>{{category.name}}</h1>
+  <p class="description">
+    {{category.description}}
+  </p>
+</div>
 <div class="item-grid">
-  <div class="item-grid__header">
-    <h1>{{category.name}}</h1>
-    <p class="description">
-      {{category.description}}
-    </p>
-  </div>
   {% if items %}
   {% for i in items %}
   <div class="item-grid__item">
-    <h3>{{i.name}}</h3>
+    {% set itemcategory = Category.query.get(i.category) %}
+    <span class="subtext">{{itemcategory.name}}</span>
+    <h3 id="itemName{{i.id}}">{{i.name}}</h3>
     {% if i.picture %}
-    <img src="{{i.picture}}" alt="item image" height="100" width="100">
+    <img id="itemImg{{i.id}}" src="{{i.picture}}" alt="item image">
     {% endif %}
-    <p class="description">{{i.description}}</p>
+    <p id="itemDescription{{i.id}}" class="description">{{i.description}}</p>
+    {% if user and user.id == i.user_id %}
     <div class="edit_buttons">
-      <button class="edit" name="edit" value="{{i.id}}"></button>
-      <button class="delete" name="delete" value="{{i.id}}"></button>
+      <button class="edit material-icons md-dark" name="edit" value="{{i.id}}">edit</button>
+      <button class="delete material-icons md-dark" name="delete" value="{{i.id}}">delete</button>
+    </div>
+    {% endif %}
     </div>
   {% endfor %}
+  {% endif %}
   {% block addnew %}{% endblock %}
   </div>
 
-  {% endif %}
+
 </div>
 {% endblock %}

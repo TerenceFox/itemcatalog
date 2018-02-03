@@ -1,4 +1,6 @@
 from app import db
+from flask import jsonify
+import json
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -37,11 +39,9 @@ class Category(db.Model):
     description = db.Column(
                       db.Unicode(250),
                       index=True,
-                      unique=True,
                       nullable=False)
     items = db.relationship('Item', backref='items', lazy='dynamic')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
 
     def __repr__(self):
         return '<Category: {}>'.format(self.name)
@@ -57,13 +57,22 @@ class Item(db.Model):
     description = db.Column(
                       db.Unicode(250),
                       index=True,
-                      unique=True,
                       nullable=False)
     picture = db.Column(
                         db.Unicode(250),
                         index=True,)
     category = db.Column(db.Integer, db.ForeignKey('category.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    @property
+    def serialize(self):
+       return {
+           'name'         : self.name,
+           'description'  : self.description,
+           'picture'      : self.picture,
+           'category_id'  : self.category,
+           'creator_id'      : self.user_id
+       }
 
     def __repr__(self):
         return '<Item {}>'.format(self.name)

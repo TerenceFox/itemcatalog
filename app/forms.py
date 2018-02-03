@@ -11,7 +11,7 @@ class newCategoryForm(FlaskForm):
 
 
 class editCategoryForm(FlaskForm):
-    id = IntegerField(validators=[DataRequired()])
+    editID = HiddenField(validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired(), Length(max=64)])
     description = TextAreaField('Description',
                                 validators=[DataRequired(), Length(max=250)])
@@ -19,7 +19,7 @@ class editCategoryForm(FlaskForm):
 
 
 class deleteCategoryForm(FlaskForm):
-    id = IntegerField(validators=[DataRequired()])
+    deleteID = HiddenField(validators=[DataRequired()])
     submit = SubmitField('CONFIRM')
 
 
@@ -34,7 +34,7 @@ class newItemForm(FlaskForm):
 
 
 class editItemForm(FlaskForm):
-    id = IntegerField(validators=[DataRequired()])
+    editID = HiddenField(validators=[DataRequired()])
     name = StringField('Name',
                         validators=[DataRequired(), Length(max=64)])
     description = TextAreaField('Description',
@@ -45,5 +45,5 @@ class editItemForm(FlaskForm):
 
 
 class deleteItemForm(FlaskForm):
-    id = IntegerField(validators=[DataRequired()])
+    deleteID = HiddenField(validators=[DataRequired()])
     submit = SubmitField('CONFIRM')

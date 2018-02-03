@@ -2,70 +2,128 @@
 
 {% block login %}
 <div class="userinfo">
-<img src="{{user.picture}}" width="100" height="100">
-<p>
-  {{user.username}}
-</p>
+<img class ="user_photo" src="{{user.picture}}">
+<div class="login_text">
+{{user.username}}
+<br>
+<button>
 <a href="{{url_for('gdisconnect')}}">Log out</a>
+</button>
+</div>
 </div>
 {% endblock %}
 
 {% block addnew %}
-<div class="category-grid__item addnew">
-  <a href="#">
-    <h1>+</h1>
+  <div class="category-grid__category addnew">
+    <i class="material-icons md-48">add_box</i>
     <h3>Add New</h3>
-  </a>
-</div>
+  </div>
 {% endblock %}
 
 {% block modals %}
-<div class="new_item modal">
-  <form action="{{url_for('createItem', id=id)}}" method="post">
-    {{ newitem.hidden_tag() }}
-    <p>
-      {{ newitem.name.label }}<br>
-      {{ newitem.name(size=32) }}
-    </p>
-    <p>
-      {{ newitem.description.label }}<br>
-      {{ newitem.description(size=32) }}
-    </p>
-    <p>
-      {{ newitem.picture.label }}<br>
-      {{ newitem.picture(size=32) }}
-    </p>
-    {{ newitem.submit() }}
-  </form>
+<div id="newItem" class="modal">
+  <div class="content">
+    <form action="{{url_for('createItem', id=id)}}" method="post">
+      {{ newitem.hidden_tag() }}
+      <h1>Create New Category</h1>
+      <div class="form_fields">
+        <p>
+          {{ newitem.name.label }}<br>
+          {{ newitem.name(size=32) }}
+        </p>
+        <p>
+          {{ newitem.description.label }}<br>
+          {{ newitem.description(size=32) }}
+        </p>
+        <p>
+          {{ newitem.picture.label }}<br>
+          {{ newitem.picture(size=32) }}
+        </p>
+      </div>
+      <div class="form_buttons">
+        <button type="button" class="cancelBtn"> CANCEL</button>
+        {{ newitem.submit() }}
+      </div>
+    </form>
+  </div>
 </div>
-<div class="edit_item modal">
-  <form action="{{url_for('editItem', id=id)}}" method="post">
-    {{ edititem.hidden_tag() }}
-    <p>
-      {{ edititem.id }}
-    </p>
-    <p>
-      {{ edititem.name.label }}<br>
-      {{ edititem.name(size=32) }}
-    </p>
-    <p>
-      {{ edititem.description.label }}<br>
-      {{ edititem.description(size=32) }}
-    </p>
-    <p>
-      {{ edititem.picture.label }}<br>
-      {{ edititem.picture(size=32) }}
-    </p>
-    {{ edititem.submit() }}
-  </form>
+
+<div id="editItem" class="modal">
+  <div class="content">
+    <form action="{{url_for('editItem', id=id)}}" method="post">
+      {{ edititem.hidden_tag() }}
+      {{ edititem.editID }}
+      <h1>Edit Item</h1>
+      <div class="form_fields">
+        <p>
+          {{ edititem.name.label }}<br>
+          {{ edititem.name(size=32) }}
+        </p>
+        <p>
+          {{ edititem.description.label }}<br>
+          {{ edititem.description(size=32) }}
+        </p>
+        <p>
+          {{ edititem.picture.label }}<br>
+          {{ edititem.picture(size=32) }}
+        </p>
+      </div>
+      <div class="form_buttons">
+        <button type="button" class="cancelBtn"> CANCEL</button>
+        {{ edititem.submit() }}
+      </div>
+    </form>
+  </div>
 </div>
-<div class="delete_item modal">
-<form action="{{url_for('deleteItem', id=id)}}" method="post">
-  {{ deleteitem.hidden_tag() }}
-  {{ deleteitem.id }} {{ deleteitem.submit() }}
-  <a href="{{url_for('index')}}">
-    <input type="button" value="&times; CANCEL">
-  </a>
-</form>
+
+<div id="deleteItem" class="modal">
+  <div class="content">
+    <form action="{{url_for('deleteItem', id=id)}}" method="post">
+      {{ deleteitem.hidden_tag() }}
+      {{ deleteitem.deleteID }}
+      <h1>Delete Item?</h1>
+      <p style="padding: 10px;">
+        Delete this item?
+      </p>
+      <div class="form_buttons" style="margin-left: 55%;">
+        <button type="button" class="cancelBtn"> CANCEL</button>
+        {{ deleteitem.submit() }}
+      </div>
+    </form>
+  </div>
 </div>
+<script>
+
+$( ".addnew").click( function() {
+  $( "#newItem").css("display", "block");
+});
+
+$( "button[name=edit]").click( function() {
+  var id = $( this ).val();
+  var nameSelector = "#itemName" + id;
+  var descriptionSelector = "#itemDescription" + id;
+  var imgSelector = "#itemImg" + id;
+  var name = $(nameSelector).text()
+  var descr = $(descriptionSelector).text()
+  var img = $(imgSelector).attr("src")
+
+  $( "#editID" ).val( id );
+  $( "input[name=name]" ).val(name);
+  $( "textarea[name=description]" ).val(descr);
+  $( "input[name=picture]" ).val(img);
+  $( "#editItem").css("display", "block");
+});
+
+$("button[name=delete]").click( function (){
+  //Get ID and current name and description for category
+  var id = $( this ).val();
+  $( "#deleteID" ).val( id );
+  $("#deleteItem" ).css("display", "block" );
+});
+
+$( ".cancelBtn").click( function() {
+  $( ".modal" ).css("display", "none");
+});
+
+</script>
 {% endblock %}
