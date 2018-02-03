@@ -17,7 +17,7 @@ To get this application running in an development environment:
 Clone this repository or download it directly.
 
 ```
-git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY
+git clone https://github.com/TerenceFox/itemcatalog
 ```
 
 The repo includes a Python 2.7 virtual environment that is provisioned with all of the dependencies required to run this application. If you want to use the virtual environment, first navigate to the `catalog` directory in the repository. Then run the activation script:
