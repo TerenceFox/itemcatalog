@@ -20,31 +20,20 @@ Clone this repository or download it directly.
 git clone https://github.com/TerenceFox/itemcatalog
 ```
 
-The repo includes a Python 2.7 virtual environment that is provisioned with all of the dependencies required to run this application. If you want to use the virtual environment, first navigate to the `catalog` directory in the repository. Then run the activation script:
+A `requirements.txt` file is provided with all of the dependencies. Navigate to the root directory of the repo in the command line and run
 
-```
-source virtual/bin/activate
-```
-*Note: the activation script sets the FLASK_APP environment variable to point the flask command at the correct module.*
-
-Your shell prompt will be prepended with `(virtual)` to indicate that your virtual environment has been activated. Type the following command to launch the Flask server:
-
-```
-flask run
-```
-
-Note: Google Sign-in expects the URL to be `http://localhost:5000`, the default address and port for Flask, and will reject a login request otherwise.
-
-If you would prefer to install this application in a virtual machine or otherwise outside a `virtualenv`,
-a `requirements.txt` file is provided with all of the dependencies. Navigate to the repository in the command line and run
 ```
 pip install -r requirements.txt
 ```
-In this case, to run the application, use the following commands from the root directory of the repository:
+
+To run the application, use the following commands from the root directory of the repo:
+
 ```
 export FLASK_APP=catalog.py
 flask run
 ```
+Note: Google Sign-in expects the URL to be `http://localhost:5000`, the default address and port for Flask, and will reject a login request otherwise.
+
 If you're running this application inside a virtual machine, you need to change the host address to make it visible to the rest of the network (such as your host machine). Use the option `--host="0.0.0.0"` with the `flask run` command.
 
 
