@@ -1,80 +1,67 @@
-# Project Title
+# Udacity Full Stack Nanodegree Item Catalog Project
 
-One Paragraph of project description goes here
+The goal of this project is to provide an understanding of CRUD operations with a server-side SQL database. The user flow begins at the index page, which shows all of the categories currently in the database and up to three of the most recently added items. Cards show information on categories and items. Click on the categories show all of the items that belong to it. Logging in with Google Sign-in allows a user to create new categories and new items. They can also edit their existing categories and items, but only if they're the original creator.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
+This application was written in Python 2.7.12 and requires Python to run. See the installation instructions below for dealing with dependencies.
 
 ### Installing
 
-A step by step series of examples that tell you have to get a development env running
+To get this application running in an development environment:
 
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
+Clone this repository or download it directly.
 
 ```
-until finished
+git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
+The repo includes a Python 2.7 virtual environment that is provisioned with all of the dependencies required to run this application. If you want to use the virtual environment, first navigate to the `catalog` directory in the repository. Then run the activation script:
 
 ```
-Give an example
+source virtual/bin/activate
+```
+*Note: the activation script sets the FLASK_APP environment variable to point the flask command at the correct module.*
+
+Your shell prompt will be prepended with `(virtual)` to indicate that your virtual environment has been activated. Type the following command to launch the Flask server:
+
+```
+flask run
 ```
 
-### And coding style tests
+Note: Google Sign-in expects the URL to be `http://localhost:5000`, the default address and port for Flask, and will reject a login request otherwise.
 
-Explain what these tests test and why
-
+If you would prefer to install this application in a virtual machine or otherwise outside a `virtualenv`,
+a `requirements.txt` file is provided with all of the dependencies. Navigate to the repository in the command line and run
 ```
-Give an example
+pip install -r requirements.txt
 ```
+In this case, to run the application, use the following commands from the root directory of the repository:
+```
+export FLASK_APP=catalog.py
+flask run
+```
+If you're running this application inside a virtual machine, you need to change the host address to make it visible to the rest of the network (such as your host machine). Use the option `--host="0.0.0.0"` with the `flask run` command.
 
-## Deployment
 
-Add additional notes about how to deploy this on a live system
+##User Flow For The Web App
+
+The database starts out empty. Sign in with Google to create a new user. Once signed in, you can create new categories. Once you've created a category, click on it to see the items page for it. Create items within the category. Categories can be edited and deleted from the index page, and items can be edited and deleted from the category page. Categories and items not created by the currently signed-in user will be viewable but not editable.
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [Flask](http://flask.pocoo.org/docs/0.12/) - The web framework used
+* [Flask-WTF](https://flask-wtf.readthedocs.io/en/stable/) - Extension for handling forms with WTForms
+* [Flask-SQLAlchemy](http://flask-sqlalchemy.pocoo.org/2.3/) - Extension for handling SQLAlchemy ORM
 
-## Contributing
+## Author
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+* **Terence Fox**
 
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 ## License
 
@@ -82,6 +69,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
+* Miguel Grinberg's [Flask Megatutorial](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world) was super helpful for modularizing the app and providing instruction on using WTForms.
+* [Material Design](https://material.io/) was loosely followed for the styling of this project. Icons are Google Icon Font, typography is Roboto.

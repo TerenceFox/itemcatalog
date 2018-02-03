@@ -2,6 +2,7 @@ from app import db
 from flask import jsonify
 import json
 
+
 class User(db.Model):
     """ORM object for User table, to store user info server-side
     """
@@ -31,6 +32,7 @@ class User(db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
+
 class Category(db.Model):
     """ORM object for Category table to store category data. Accepts unicode
     for form validation.
@@ -54,7 +56,7 @@ class Category(db.Model):
 
 class Item(db.Model):
     """ORM object for Item table to store item data. Accepts unicode for form
-    validation. 
+    validation.
     """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(
