@@ -6,9 +6,11 @@
 <div class="login_text">
 {{user.username}}
 <br>
-<button>
-<a href="{{url_for('gdisconnect')}}">Log out</a>
+
+<button onclick="window.location.href='{{url_for('gdisconnect')}}'">
+  Log out
 </button>
+
 </div>
 </div>
 {% endblock %}
@@ -29,15 +31,15 @@
       <div class="form_fields">
         <p>
           {{ newitem.name.label }}<br>
-          {{ newitem.name(size=32) }}
+          {{ newitem.name }}
         </p>
         <p>
           {{ newitem.description.label }}<br>
-          {{ newitem.description(size=32) }}
+          {{ newitem.description }}
         </p>
         <p>
           {{ newitem.picture.label }}<br>
-          {{ newitem.picture(size=32) }}
+          {{ newitem.picture }}
         </p>
       </div>
       <div class="form_buttons">
@@ -57,15 +59,15 @@
       <div class="form_fields">
         <p>
           {{ edititem.name.label }}<br>
-          {{ edititem.name(size=32) }}
+          {{ edititem.name }}
         </p>
         <p>
           {{ edititem.description.label }}<br>
-          {{ edititem.description(size=32) }}
+          {{ edititem.description }}
         </p>
         <p>
           {{ edititem.picture.label }}<br>
-          {{ edititem.picture(size=32) }}
+          {{ edititem.picture }}
         </p>
       </div>
       <div class="form_buttons">

@@ -2,6 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, IntegerField, SubmitField, HiddenField
 from wtforms.validators import DataRequired, Length, Optional, URL
 
+#This module builds form objects with WTForms for use in the html templates.
+
 class newCategoryForm(FlaskForm):
     name = StringField('Name',
                        validators=[DataRequired(), Length(max=64)])

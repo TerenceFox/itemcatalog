@@ -6,8 +6,8 @@
 <div class="login_text">
 {{user.username}}
 <br>
-<button>
-<a href="{{url_for('gdisconnect')}}">Log out</a>
+<button onclick="window.location.href='{{url_for('gdisconnect')}}'">
+  Log out
 </button>
 </div>
 </div>
@@ -30,7 +30,7 @@
       <div class="form_fields">
         <p>
           {{ newcategory.name.label }}<br>
-          {{ newcategory.name(size=32) }}
+          {{ newcategory.name }}
         </p>
         <p>
           {{ newcategory.description.label }}<br>
@@ -54,11 +54,11 @@
       <div class="form_fields">
         <p>
           {{ editcategory.name.label }}<br>
-          {{ editcategory.name(size=32) }}
+          {{ editcategory.name }}
         </p>
         <p>
           {{ editcategory.description.label }}<br>
-          {{ editcategory.description(size=32) }}
+          {{ editcategory.description }}
         </p>
       </div>
       <div class="form_buttons">
@@ -84,7 +84,7 @@
       </div>
     </form>
   </div>
-<div>
+</div>
 <script>
 // New Category Modal function
 $( ".addnew" ).click( function() {

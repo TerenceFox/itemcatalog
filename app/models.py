@@ -3,6 +3,8 @@ from flask import jsonify
 import json
 
 class User(db.Model):
+    """ORM object for User table, to store user info server-side
+    """
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(
                          db.String(64),
@@ -30,6 +32,9 @@ class User(db.Model):
         return '<User {}>'.format(self.username)
 
 class Category(db.Model):
+    """ORM object for Category table to store category data. Accepts unicode
+    for form validation.
+    """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(
                          db.Unicode(64),
@@ -48,6 +53,9 @@ class Category(db.Model):
 
 
 class Item(db.Model):
+    """ORM object for Item table to store item data. Accepts unicode for form
+    validation. 
+    """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(
                          db.Unicode(64),
@@ -66,6 +74,7 @@ class Item(db.Model):
 
     @property
     def serialize(self):
+        #JSON serializer property
        return {
            'name'         : self.name,
            'description'  : self.description,
