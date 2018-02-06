@@ -3,7 +3,9 @@ from flask import render_template, flash, redirect, url_for, request, session,\
                   jsonify, make_response, session
 from app.forms import newCategoryForm, editCategoryForm, deleteCategoryForm, \
                       newItemForm, editItemForm, deleteItemForm
-from models import Category, User, Item
+from models.category import Category
+from models.item import Item
+from models.user import User
 import random
 import string
 import json
