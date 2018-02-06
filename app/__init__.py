@@ -10,4 +10,15 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 
 #Initialize database models and routing
-from app import routes, models
+from app import models
+from .routes import api
+from .routes import index
+from .routes import gconnect
+from .routes import gdisconnect
+from .routes import createcategory
+from .routes import editcategory
+from .routes import deletecategory
+from .routes import category
+from .routes import createitem
+from .routes import edititem
+from .routes import deleteitem
