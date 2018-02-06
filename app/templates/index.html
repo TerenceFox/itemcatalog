@@ -111,9 +111,8 @@
 
   <div id="editCategory" class="modal">
     <div class="content">
-      <form action="{{url_for('editCategory')}}" method="post">
+      <form id="editCategoryForm" action="{{url_for('editCategory')}}" method="post">
         {{ editcategory.hidden_tag() }}
-        {{ editcategory.id }}
         <h1> Edit Category </h1>
         <div class="form_fields">
           <p>
@@ -169,7 +168,6 @@
     $( "#editID" ).val( id );
     $( "input[name=name]" ).val(name);
     $( "textarea[name=description]" ).val(descr);
-
     $("#editCategory" ).css("display", "block" );
   });
 

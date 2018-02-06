@@ -37,7 +37,6 @@ window.location.href = "{{url_for('showCategory', id=id)}}";
 {% endblock %}
 
 {% block content %}
-{% set user = User.query.filter_by(id=session['user_id']).one_or_none() %}
 <div class="item-grid__header">
   <h1>{{category.name}}</h1>
   <p class="description">
@@ -55,17 +54,20 @@ window.location.href = "{{url_for('showCategory', id=id)}}";
     <img id="itemImg{{i.id}}" src="{{i.picture}}" alt="item image">
     {% endif %}
     <p id="itemDescription{{i.id}}" class="description">{{i.description}}</p>
-    {% if user and user.id == i.user_id %}
+    {% if is_logged_in %}
+    {% set user = User.query.filter_by(id=session['user_id']).one_or_none() %}
+    {% if user.id == i.user_id %}
     <div class="edit_buttons">
       <button class="edit material-icons md-dark" name="edit" value="{{i.id}}">edit</button>
       <button class="delete material-icons md-dark" name="delete" value="{{i.id}}">delete</button>
     </div>
     {% endif %}
+    {% endif %}
     </div>
   {% endfor %}
   {% endif %}
   {% if is_logged_in %}
-  <div class="category-grid__category addnew">
+  <div class="item-grid__item addnew">
     <i class="material-icons md-48">add_box</i>
     <h3>Add New</h3>
   </div>
@@ -78,7 +80,7 @@ window.location.href = "{{url_for('showCategory', id=id)}}";
     <div class="content">
       <form action="{{url_for('createItem', id=id)}}" method="post">
         {{ newitem.hidden_tag() }}
-        <h1>Create New Category</h1>
+        <h1>Create New Item</h1>
         <div class="form_fields">
           <p>
             {{ newitem.name.label }}<br>

@@ -14,10 +14,14 @@ def editItem():
     # Look for CSRF token in form, verify POST method, and validate form data.
     if edititem.validate_on_submit():
         item = Item.query.filter_by(id=edititem.editID.data).one()
-        item.name = edititem.name.data
-        item.description = edititem.description.data
-        if edititem.picture.data:
-            item.picture = edititem.picture.data
+        if session['user_id'] == item.user_id:
+            item.name = edititem.name.data
+            item.description = edititem.description.data
+            if edititem.picture.data:
+                item.picture = edititem.picture.data
+        else:
+            flash("You need to be the owner of this item to edit it.")
+            return redirect(url_for('showCategory', id=category_id))
         db.session.add(item)
         db.session.commit()
         print "Successfully edited item"

@@ -18,17 +18,16 @@ def deleteCategory():
     # Look for CSRF token in form, verify POST method, and validate form data.
     if deletecategory.validate_on_submit():
         category = Category.query.filter_by(id=deletecategory.deleteID.data).one()
-        items = Item.query.filter_by(category=category.id)
-        print "Delete category"
-        print "User: {}".format(category.id)
-        print "Name: {}".format(category.name)
-        print "Description: {}".format(category.description)
-        # Delete items related to category as well as category itself.
-        if items:
-            for i in items:
-                db.session.delete(i)
-        db.session.delete(category)
-        db.session.commit()
-        return redirect(url_for('index'))
+        if session['user_id'] == category.user_id:
+            items = Item.query.filter_by(category=category.id)
+            # Delete items related to category as well as category itself.
+            if items:
+                for i in items:
+                    db.session.delete(i)
+            db.session.delete(category)
+            db.session.commit()
+            return redirect(url_for('index'))
+        else:
+            return redirect(url_for('index'))
     else:
         return redirect(url_for('index'))
