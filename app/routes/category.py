@@ -13,27 +13,20 @@ def showCategory(id):
     category = Category.query.filter_by(id=id).one()
     items = Item.query.filter_by(category=id).all()
     state = session['state']
-    if 'username' in session:
-        user = User.query.filter_by(id=session['user_id']).one()
-        # Pass form objects into template.
-        newitem = newItemForm()
-        edititem = editItemForm()
-        deleteitem = deleteItemForm()
-        # Display logged-in template if user is present in session.
-        return render_template('category_loggedin.html',
-                               STATE=state,
-                               user=user,
-                               category=category,
-                               Category=Category,
-                               items=items,
-                               id=id,
-                               newitem=newitem,
-                               edititem=edititem,
-                               deleteitem=deleteitem)
-    else:
-        return render_template('category.html',
-                               STATE=state,
-                               category=category,
-                               Category=Category,
-                               items=items,
-                               id=id)
+    is_logged_in = 'username' in session
+    # Pass form objects into template.
+    newitem = newItemForm()
+    edititem = editItemForm()
+    deleteitem = deleteItemForm()
+    # Display logged-in template if user is present in session.
+    return render_template('category.html',
+                           STATE=state,
+                           category=category,
+                           User=User,
+                           Category=Category,
+                           items=items,
+                           id=id,
+                           newitem=newitem,
+                           edititem=edititem,
+                           deleteitem=deleteitem,
+                           is_logged_in=is_logged_in)

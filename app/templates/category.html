@@ -1,19 +1,35 @@
 {% extends "base.html" %}
 
 {% block login %}
-<input id="signinButton" type=image src="{{url_for('static', filename="img/btn_google_signin_light_normal_web.png")}}">
-<script>
-  $('#signinButton').hover( function(){
-    $( this ).attr("src", "{{url_for('static', filename="img/btn_google_signin_light_pressed_web.png")}}")
-  }, function() {
-    $( this ).attr("src", "{{url_for('static', filename="img/btn_google_signin_light_normal_web.png")}}")
-  }
-  );
-  $('#signinButton').click(function() {
-    // signInCallback defined in step 6.
-    auth2.grantOfflineAccess().then(signInCallback);
-  });
-</script>
+{% if is_logged_in %}
+  {% set user = User.query.filter_by(id=session['user_id']).one_or_none() %}
+  <div class="userinfo">
+  <img class ="user_photo" src="{{user.picture}}">
+  <div class="login_text">
+  {{user.username}}
+  <br>
+
+  <button onclick="window.location.href='{{url_for('gdisconnect')}}'">
+    Log out
+  </button>
+
+  </div>
+  </div>
+{% else %}
+  <input id="signinButton" type=image src="{{url_for('static', filename="img/btn_google_signin_light_normal_web.png")}}">
+  <script>
+    $('#signinButton').hover( function(){
+      $( this ).attr("src", "{{url_for('static', filename="img/btn_google_signin_light_pressed_web.png")}}")
+    }, function() {
+      $( this ).attr("src", "{{url_for('static', filename="img/btn_google_signin_light_normal_web.png")}}")
+    }
+    );
+    $('#signinButton').click(function() {
+      // signInCallback defined in step 6.
+      auth2.grantOfflineAccess().then(signInCallback);
+    });
+  </script>
+{% endif %}
 {% endblock %}
 
 {% block callback %}
@@ -21,6 +37,7 @@ window.location.href = "{{url_for('showCategory', id=id)}}";
 {% endblock %}
 
 {% block content %}
+{% set user = User.query.filter_by(id=session['user_id']).one_or_none() %}
 <div class="item-grid__header">
   <h1>{{category.name}}</h1>
   <p class="description">
@@ -47,9 +64,119 @@ window.location.href = "{{url_for('showCategory', id=id)}}";
     </div>
   {% endfor %}
   {% endif %}
-  {% block addnew %}{% endblock %}
+  {% if is_logged_in %}
+  <div class="category-grid__category addnew">
+    <i class="material-icons md-48">add_box</i>
+    <h3>Add New</h3>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block modals %}
+  <div id="newItem" class="modal">
+    <div class="content">
+      <form action="{{url_for('createItem', id=id)}}" method="post">
+        {{ newitem.hidden_tag() }}
+        <h1>Create New Category</h1>
+        <div class="form_fields">
+          <p>
+            {{ newitem.name.label }}<br>
+            {{ newitem.name }}
+          </p>
+          <p>
+            {{ newitem.description.label }}<br>
+            {{ newitem.description }}
+          </p>
+          <p>
+            {{ newitem.picture.label }}<br>
+            {{ newitem.picture }}
+          </p>
+        </div>
+        <div class="form_buttons">
+          <button type="button" class="cancelBtn"> CANCEL</button>
+          {{ newitem.submit() }}
+        </div>
+      </form>
+    </div>
   </div>
 
+  <div id="editItem" class="modal">
+    <div class="content">
+      <form action="{{url_for('editItem', id=id)}}" method="post">
+        {{ edititem.hidden_tag() }}
+        {{ edititem.editID }}
+        <h1>Edit Item</h1>
+        <div class="form_fields">
+          <p>
+            {{ edititem.name.label }}<br>
+            {{ edititem.name }}
+          </p>
+          <p>
+            {{ edititem.description.label }}<br>
+            {{ edititem.description }}
+          </p>
+          <p>
+            {{ edititem.picture.label }}<br>
+            {{ edititem.picture }}
+          </p>
+        </div>
+        <div class="form_buttons">
+          <button type="button" class="cancelBtn"> CANCEL</button>
+          {{ edititem.submit() }}
+        </div>
+      </form>
+    </div>
+  </div>
 
-</div>
+  <div id="deleteItem" class="modal">
+    <div class="content">
+      <form action="{{url_for('deleteItem', id=id)}}" method="post">
+        {{ deleteitem.hidden_tag() }}
+        {{ deleteitem.deleteID }}
+        <h1>Delete Item?</h1>
+        <p style="padding: 10px;">
+          Delete this item?
+        </p>
+        <div class="form_buttons" style="margin-left: 55%;">
+          <button type="button" class="cancelBtn"> CANCEL</button>
+          {{ deleteitem.submit() }}
+        </div>
+      </form>
+    </div>
+  </div>
+  <script>
+
+  $( ".addnew").click( function() {
+    $( "#newItem").css("display", "block");
+  });
+
+  $( "button[name=edit]").click( function() {
+    var id = $( this ).val();
+    var nameSelector = "#itemName" + id;
+    var descriptionSelector = "#itemDescription" + id;
+    var imgSelector = "#itemImg" + id;
+    var name = $(nameSelector).text()
+    var descr = $(descriptionSelector).text()
+    var img = $(imgSelector).attr("src")
+
+    $( "#editID" ).val( id );
+    $( "input[name=name]" ).val(name);
+    $( "textarea[name=description]" ).val(descr);
+    $( "input[name=picture]" ).val(img);
+    $( "#editItem").css("display", "block");
+  });
+
+  $("button[name=delete]").click( function (){
+    //Get ID and current name and description for category
+    var id = $( this ).val();
+    $( "#deleteID" ).val( id );
+    $("#deleteItem" ).css("display", "block" );
+  });
+
+  $( ".cancelBtn").click( function() {
+    $( ".modal" ).css("display", "none");
+  });
+
+  </script>
 {% endblock %}

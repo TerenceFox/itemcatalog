@@ -25,25 +25,15 @@ def index():
     editcategory = editCategoryForm()
     deletecategory = deleteCategoryForm()
     # Display logged-in template if user is present in session.
-    if 'username' in session:
-        user = User.query.filter_by(id=session['user_id']).one()
-        return render_template('index_loggedin.html',
-                               categories=categories,
-                               Category=Category,
-                               users=users,
-                               User=User,
-                               items=items,
-                               newcategory=newcategory,
-                               editcategory=editcategory,
-                               deletecategory=deletecategory,
-                               user=user,
-                               STATE=state)
-    # Logged-out view.
-    else:
-        return render_template('index.html',
-                               categories=categories,
-                               Category=Category,
-                               users=users,
-                               User=User,
-                               items=items,
-                               STATE=state)
+    is_logged_in = 'username' in session
+    return render_template('index.html',
+                           categories=categories,
+                           Category=Category,
+                           users=users,
+                           User=User,
+                           items=items,
+                           newcategory=newcategory,
+                           editcategory=editcategory,
+                           deletecategory=deletecategory,
+                           STATE=state,
+                           is_logged_in=is_logged_in)
