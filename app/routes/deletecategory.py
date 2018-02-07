@@ -11,13 +11,18 @@ import requests
 from oauth2client import client
 
 
-# This route handles a form submission to confirm deletion of a category.
 @app.route('/deletecategory', methods=['POST'])
 def deleteCategory():
+    """Takes the id of the category associated with the delete button and
+    deletes it from the database. Also deletes the items associated with the
+    category.
+    """
     deletecategory = deleteCategoryForm()
     # Look for CSRF token in form, verify POST method, and validate form data.
     if deletecategory.validate_on_submit():
-        category = Category.query.filter_by(id=deletecategory.deleteID.data).one()
+        deleteID = deletecategory.deleteID.data
+        category = Category.query.filter_by(id=deleteID).one()
+        # Check logged in user against the category creator.
         if session['user_id'] == category.user_id:
             items = Item.query.filter_by(category=category.id)
             # Delete items related to category as well as category itself.

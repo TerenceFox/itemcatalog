@@ -3,9 +3,12 @@ from flask import flash, redirect, url_for, request, session, make_response
 import json
 import httplib2
 
-# Google Sign-out flow
+
 @app.route('/gdisconnect')
 def gdisconnect():
+    """Flushes the current user from the session object and revokes the access
+    token associated with the Google Sign-in.
+    """
     # Step 1: Check if user is present in session.
     access_token = session.get('access_token')
     if access_token is None:
@@ -15,15 +18,10 @@ def gdisconnect():
                    401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    print 'In gdisconnect access token is {}'.format(access_token)
-    print 'User name is: '
-    print session['username']
-    # Step 2: API call to revoke the access token stored in session.
+    # Step 2: API call to revoke the stored access token.
     url = 'https://accounts.google.com/o/oauth2/revoke?token={}'.format(session['access_token'])  # NOQA
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
-    print 'result is '
-    print result
     # Step 3: 200 or 400 status both mean the user should be logged out and
     # deleted from session.
     if result['status'] == '200':

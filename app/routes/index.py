@@ -7,10 +7,14 @@ from app.models.user import User
 import random
 import string
 
-# Index page for displaying list of categories and recently created items.
+
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
+    """Handles the route for the main page, which displays all stored
+    categories and starts the login flow by creating a state token. When
+    logged in, categories can be created and edited from this page.
+    """
     # OAuth Flow - Create a state token to protect against CSRF
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))

@@ -5,9 +5,11 @@ from app.models.item import Item
 from app.models.user import User
 
 
-# This route handles form data for creating a new item.
 @app.route('/createitem/', methods=['POST'])
 def createItem():
+    """Handles Create New Item form submissions. Matches a newly created item
+    with the current user and stores it in the database.
+    """
     user = User.query.filter_by(id=session['user_id']).one()
     newitem = newItemForm()
     # Associated category specified by query parameter.
@@ -21,10 +23,6 @@ def createItem():
                     user_id=user.id)
         db.session.add(item)
         db.session.commit()
-        print "Successfully added item"
-        print "User: {}".format(item.user_id)
-        print "Category: {}".format(item.category)
-        print "Name: {}".format(item.name)
         return redirect(url_for('showCategory', id=category_id))
     else:
         # If validation failed, roll back database session and provide error

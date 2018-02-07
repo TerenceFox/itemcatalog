@@ -10,6 +10,10 @@ from oauth2client import client
 # Handles Google Sign-in flow server-side
 @app.route('/gconnect', methods=['POST'])
 def gConnect():
+    """Implements a hybrid client-server oauth flow for Google Sign-in. See
+    below for specific steps. Global variables can be found in the config
+    module.
+    """
     # Step 1: Validate state token.
     if request.args.get('state') != session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -76,6 +80,8 @@ def gConnect():
 
 # Helper functions for storing users in database.
 def createUser(login_session):
+    """Create a new user with the data in the session object.
+    """
     newUser = User(username=session['username'],
                    email=session['email'],
                    picture=session['picture'],
@@ -87,6 +93,9 @@ def createUser(login_session):
 
 
 def getUserID(email):
+    """Find a user in the database from the email address provided or return
+    none.
+    """
     try:
         user = db.session.query(User).filter_by(email=email).one()
         return user.id

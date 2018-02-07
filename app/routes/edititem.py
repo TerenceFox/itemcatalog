@@ -7,6 +7,9 @@ from app.models.user import User
 
 @app.route('/edititem/', methods=['POST'])
 def editItem():
+    """Handles Edit Item form submissions and updates the item associated with
+    the edit button.
+    """
     user = User.query.filter_by(id=session['user_id']).one()
     edititem = editItemForm()
     # Associated category specified by query parameter.
@@ -14,6 +17,9 @@ def editItem():
     # Look for CSRF token in form, verify POST method, and validate form data.
     if edititem.validate_on_submit():
         item = Item.query.filter_by(id=edititem.editID.data).one()
+        # Check logged in user against the item's creator.
+        """
+        """
         if session['user_id'] == item.user_id:
             item.name = edititem.name.data
             item.description = edititem.description.data
@@ -24,10 +30,6 @@ def editItem():
             return redirect(url_for('showCategory', id=category_id))
         db.session.add(item)
         db.session.commit()
-        print "Successfully edited item"
-        print "User: {}".format(item.user_id)
-        print "Category: {}".format(item.category)
-        print "Name: {}".format(item.name)
         return redirect(url_for('showCategory', id=category_id))
     else:
         # If validation failed, roll back database session and provide error

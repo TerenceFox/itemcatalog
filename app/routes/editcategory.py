@@ -8,11 +8,15 @@ from app.models.user import User
 # This route handles form data for editing existing categories.
 @app.route('/editcategory', methods=['POST'])
 def editCategory():
+    """Handle Edit Category form submissions and update the category
+    associated with the edit button.
+    """
     user = User.query.filter_by(id=session['user_id']).one()
     editcategory = editCategoryForm()
     # Look for CSRF token in form, verify POST method, and validate form data.
     if editcategory.validate_on_submit():
         category = Category.query.filter_by(id=editcategory.editID.data).one()
+        # Check logged in user against the item's creator.
         if session['user_id'] == category.user_id:
             category.name = editcategory.name.data
             category.description = editcategory.description.data

@@ -5,9 +5,12 @@ from app.models.category import Category
 from app.models.user import User
 
 
-# This route handles form data for creating new categories.
 @app.route('/createcategory', methods=['POST'])
 def createNewCategory():
+    """Handler for form submissions from the New Category form. Creates the
+    category in the database, associates it with the current user and
+    redirects back to the index page.
+    """
     user = User.query.filter_by(id=session['user_id']).one()
     newcategory = newCategoryForm()
     # Look for CSRF token in form, verify POST method, and validate form data.
@@ -18,10 +21,6 @@ def createNewCategory():
                             user_id=user.id)
         db.session.add(category)
         db.session.commit()
-        print "Successfully added category"
-        print "User: {}".format(user.id)
-        print "Name: {}".format(newcategory.name.data)
-        print "Description: {}".format(newcategory.description.data)
         return redirect(url_for('index'))
     else:
         # If validation failed, roll back database session and provide error
