@@ -24,6 +24,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
-
-
+*.pyc
+app.db
 # End of https://www.gitignore.io/api/macos
