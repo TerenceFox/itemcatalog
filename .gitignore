@@ -26,4 +26,6 @@ Temporary Items
 .apdisk
 *.pyc
 app.db
+venv
+catalog.wsgi
 # End of https://www.gitignore.io/api/macos

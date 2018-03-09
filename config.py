@@ -9,6 +9,6 @@ class Config(object):
         'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # Global variable for OAuth
-    CLIENT_SECRET_FILE = 'app/client_secret.json'
+    CLIENT_SECRET_FILE =  os.path.join(basedir, 'client_secret.json')
     CLIENT_ID = json.loads(
-        open('app/client_secret.json', 'r').read())['web']['client_id']
+        open(CLIENT_SECRET_FILE, 'r').read())['web']['client_id']
